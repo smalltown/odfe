@@ -1,0 +1,3 @@
+{{- if .Values.cloudProviders.aws }}
+{{ template "aws_ebs" . }}
+{{- end }}

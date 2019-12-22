@@ -1,0 +1,10 @@
+releases:
+  - name: aws-storage-class
+    namespace: kube-system
+    labels:
+      default: true
+      component: aws-storage-class
+      role: cluster-basic
+    chart: ../helm/charts/aws-storage-class
+    wait: true
+    installed: {{ env "AWS_STORAGE_CLASS_INSTALLED" | default "true" }}

@@ -1,0 +1,74 @@
+releases:   
+  - name: "elasticsearch-data"
+    namespace: "elastic"
+    labels:
+      default: true
+      component: elasticsearch-data
+      role: elastic
+    chart: "../helm/charts/elasticsearch"
+    wait: true
+    installed: {{ env "ELASTICSEARCH_INSTALLED" | default "true" }}
+    values:
+    - clusterName: "elasticsearch"
+      image: "amazon/opendistro-for-elasticsearch"
+      imageTag: "1.3.0"
+      nodeGroup: "data"
+      roles:
+        master: "false"
+        ingest: "true"
+        data: "true"
+      replicas: 2
+      minimumMasterNodes: 1
+      protocol: https
+      esJavaOpts: "-Xmx8g -Xms8g"
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "8Gi"
+        limits:
+          cpu: "1000m"
+          memory: "9Gi"
+      volumeClaimTemplate:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "ssd-ap-southeast-1b"
+        resources:
+          requests:
+            storage: 500Gi
+      esConfig:
+        elasticsearch.yml: |
+        ######## Start OpenDistro for Elasticsearch Security Demo Configuration ########
+        # WARNING: revise all the lines below before you go into production
+        opendistro_security.ssl.transport.pemcert_filepath: certs/esnode.pem
+        opendistro_security.ssl.transport.pemkey_filepath: certs/esnode-key.pem
+        opendistro_security.ssl.transport.pemtrustedcas_filepath: certs/root-ca.pem
+        opendistro_security.ssl.transport.enforce_hostname_verification: false
+        opendistro_security.ssl.http.enabled: true
+        opendistro_security.ssl.http.pemcert_filepath: certs/esnode.pem
+        opendistro_security.ssl.http.pemkey_filepath: certs/esnode-key.pem
+        opendistro_security.ssl.http.pemtrustedcas_filepath: certs/root-ca.pem
+        opendistro_security.allow_unsafe_democertificates: true
+        opendistro_security.allow_default_init_securityindex: true
+        opendistro_security.authcz.admin_dn:
+          - CN=kirk,OU=client,O=client,L=test, C=de
+        opendistro_security.nodes_dn:
+          - CN=esnode,OU=client,O=client,L=test, C=de
+        opendistro_security.audit.type: internal_elasticsearch
+        opendistro_security.enable_snapshot_restore_privilege: true
+        opendistro_security.check_snapshot_restore_write_privileges: true
+        opendistro_security.restapi.roles_enabled: ["all_access", "security_rest_api_access"]
+        cluster.routing.allocation.disk.threshold_enabled: false
+        ######## End OpenDistro for Elasticsearch Security Demo Configuration ########
+      secretMounts:
+        - name: odfe-certs
+          secretName: odfe-certs
+          path: /usr/share/elasticsearch/config/certs
+      extraVolumes:
+        - name: supervisord
+          emptyDir: {} 
+      extraVolumeMounts:
+        - name: supervisord
+          mountPath: /usr/share/supervisor
+      readiness:
+        enabled: false
+      sysctlInitContainer:
+        enabled: false

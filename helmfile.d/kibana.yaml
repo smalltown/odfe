@@ -1,0 +1,34 @@
+releases:   
+  - name: "kibana"
+    namespace: "elastic"
+    labels:
+      default: true
+      component: kibana
+      role: elastic
+    chart: "../helm/charts/kibana"
+    wait: true
+    installed: {{ env "KIBANA_INSTALLED" | default "true" }}
+    values:
+    - elasticsearchHosts: "https://elasticsearch-data:9200"
+      image: "amazon/opendistro-for-elasticsearch-kibana"
+      imageTag: "1.3.0"
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "2Gi"
+        limits:
+          cpu: "1000m"
+          memory: "3Gi"
+      kibanaConfig:
+        kibana.yml: |
+        elasticsearch.ssl.verificationMode: none
+        elasticsearch.username: kibanaserver
+        elasticsearch.password: kibanaserver
+        elasticsearch.requestHeadersWhitelist: ["securitytenant","Authorization"]          
+        opendistro_security.multitenancy.enabled: true
+        opendistro_security.multitenancy.tenants.preferred: ["Private", "Global"]
+      extraEnvs: 
+        - name: ELASTIC_USERNAME
+          value: admin
+        - name: ELASTIC_PASSWORD
+          value: admin
