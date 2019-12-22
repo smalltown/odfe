@@ -78,8 +78,8 @@ module "worker_spot" {
   worker_config = {
     name             = "spot"
     instance_count   = "2"
-    ec2_type_1       = "t2.2xlarge"
-    ec2_type_2       = "t3.2xlarge"
+    ec2_type_1       = "r4.xlarge"
+    ec2_type_2       = "r3.xlarge"
     root_volume_iops = "0"
     root_volume_size = "40"
     root_volume_type = "gp2"
