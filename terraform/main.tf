@@ -73,13 +73,13 @@ module "worker_spot" {
   kube_service_cidr  = var.service_cidr
 
   security_group_ids = module.kubernetes.worker_sg_ids
-  subnet_ids         = module.network.private_subnet_ids
+  subnet_ids         = list(module.network.private_subnet_ids[0])
 
   worker_config = {
     name             = "spot"
     instance_count   = "2"
-    ec2_type_1       = "t2.2xlarge"
-    ec2_type_2       = "t3.2xlarge"
+    ec2_type_1       = "r4.xlarge"
+    ec2_type_2       = "r3.xlarge"
     root_volume_iops = "0"
     root_volume_size = "40"
     root_volume_type = "gp2"
