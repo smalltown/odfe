@@ -7,6 +7,7 @@ releases:
       role: elastic
     chart: "../helm/charts/kibana"
     wait: true
+    timeout: 600
     installed: {{ env "KIBANA_INSTALLED" | default "true" }}
     values:
     - elasticsearchHosts: "https://elasticsearch-data:9200"
@@ -15,18 +16,18 @@ releases:
       resources:
         requests:
           cpu: "100m"
-          memory: "2Gi"
+          memory: "7Gi"
         limits:
           cpu: "1000m"
-          memory: "3Gi"
+          memory: "8Gi"
       kibanaConfig:
         kibana.yml: |
-        elasticsearch.ssl.verificationMode: none
-        elasticsearch.username: kibanaserver
-        elasticsearch.password: kibanaserver
-        elasticsearch.requestHeadersWhitelist: ["securitytenant","Authorization"]          
-        opendistro_security.multitenancy.enabled: true
-        opendistro_security.multitenancy.tenants.preferred: ["Private", "Global"]
+          elasticsearch.ssl.verificationMode: none
+          elasticsearch.username: kibanaserver
+          elasticsearch.password: kibanaserver
+          elasticsearch.requestHeadersWhitelist: ["securitytenant","Authorization"]          
+          opendistro_security.multitenancy.enabled: true
+          opendistro_security.multitenancy.tenants.preferred: ["Private", "Global"]
       extraEnvs: 
         - name: ELASTIC_USERNAME
           value: admin
