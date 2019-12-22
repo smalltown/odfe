@@ -185,6 +185,9 @@ terminationGracePeriod: 120
 
 sysctlVmMaxMapCount: 262144
 
+readiness:
+  enabled: true
+
 readinessProbe:
   failureThreshold: 3
   initialDelaySeconds: 10

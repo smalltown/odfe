@@ -95,20 +95,11 @@ spec:
                 http () {
                     local path="${1}"
                     set -- -XGET -s --fail
-
-                    if [ -n "${ELASTICSEARCH_USERNAME}" ] && [ -n "${ELASTICSEARCH_PASSWORD}" ]; then
-                      set -- "$@" -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}"
+                    if [ -n "${ELASTIC_USERNAME}" ] && [ -n "${ELASTIC_PASSWORD}" ]; then
+                      set -- "$@" -u "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}"
                     fi
-
-                    STATUS=$(curl --output /dev/null --write-out "%{http_code}" -k "$@" "{{ .Values.protocol }}://localhost:{{ .Values.httpPort }}${path}")
-                    if [[ "${STATUS}" -eq 200 ]]; then
-                      exit 0
-                    fi
-
-                    echo "Error: Got HTTP code ${STATUS} but expected a 200"
-                    exit 1
+                    curl -k "$@" "{{ .Values.protocol }}://localhost:{{ .Values.httpPort }}${path}"
                 }
-
                 http "{{ .Values.healthCheckPath }}"
         ports:
         - containerPort: {{ .Values.httpPort }}

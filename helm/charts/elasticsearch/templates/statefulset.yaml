@@ -125,7 +125,7 @@ spec:
         {{- end }}
 {{ end }}
       {{- if .Values.extraVolumes }}
-{{ tpl .Values.extraVolumes . | indent 8 }}
+{{ toYaml .Values.extraVolumes | indent 8 }}
       {{- end }}
       {{- if .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -183,6 +183,7 @@ spec:
 {{ toYaml .Values.securityContext | indent 10 }}
         image: "{{ .Values.image }}:{{ .Values.imageTag }}"
         imagePullPolicy: "{{ .Values.imagePullPolicy }}"
+{{- if .Values.readiness.enabled }}
         readinessProbe:
 {{ toYaml .Values.readinessProbe | indent 10 }}
           exec:
@@ -218,6 +219,7 @@ spec:
                         exit 1
                     fi
                 fi
+{{- end }}
         ports:
         - name: http
           containerPort: {{ .Values.httpPort }}
@@ -282,7 +284,7 @@ spec:
             subPath: {{ $path }}
           {{- end -}}
         {{- if .Values.extraVolumeMounts }}
-{{ tpl .Values.extraVolumeMounts . | indent 10 }}
+{{ toYaml .Values.extraVolumeMounts | indent 10 }}
         {{- end }}
       {{- if .Values.masterTerminationFix }}
       {{- if eq .Values.roles.master "true" }}
