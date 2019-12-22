@@ -73,7 +73,7 @@ module "worker_spot" {
   kube_service_cidr  = var.service_cidr
 
   security_group_ids = module.kubernetes.worker_sg_ids
-  subnet_ids         = module.network.private_subnet_ids
+  subnet_ids         = list(module.network.private_subnet_ids[0])
 
   worker_config = {
     name             = "spot"
